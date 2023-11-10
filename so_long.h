@@ -6,7 +6,7 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/20 16:46:22 by yliew             #+#    #+#             */
-/*   Updated: 2023/10/21 16:51:49 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/10 13:09:10 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@
 /*image paths*/
 
 # define FLOOR "assets/PixelTexturePack/xpm/GRAYROCKS.xpm"
+# define WIDTH 32
+# define HEIGHT 32
 
 /*structs*/
 
@@ -61,6 +63,13 @@ typedef struct s_data
 	void	*win_ptr;
 	t_map	map;
 	t_sprite	floor;
+	t_sprite	player;
+	int	start_pos;
+	int	coins;
+	int	exit;
 }	t_data;
+
+void	open_map(t_data *game, char *map_path);
+void	end(char *message, t_data *data, int exit_code);
 
 #endif
