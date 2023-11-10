@@ -13,7 +13,8 @@ LIB_DIR = libft
 MLX_DIR = minilibx-linux
 
 # so_long targets
-SRCS = so_long.c
+TARGET = so_long.c verify_map.c exit_utils.c
+SRCS = $(addprefix srcs/, $(TARGET))
 
 # libft targets
 LIB_TARGET = ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c \

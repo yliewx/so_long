@@ -6,13 +6,13 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 16:35:32 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/10 13:39:15 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/10 19:03:40 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
 
-int	is_rectangle(t_map *map)
+void	check_rectangle(t_data *game, t_map *map)
 {
 	int	i;
 
@@ -20,43 +20,43 @@ int	is_rectangle(t_map *map)
 	while (map->arr[i] && map->arr[i + 1])
 	{
 		if (ft_strlen(map->arr[i]) != ft_strlen(map->arr[i + 1]))
-			return (0);
+			end("Invalid map: Must be rectangular.\n", game, 1);
 		i++;
 	}
-	return (1);
 }
 
 void	check_closed(t_data *game, t_map *map)
 {
 	int	i;
 	int	j;
-	int	last_column;
 
 	i = 0;
 	j = 0;
-	last_column = ft_strlen(map->arr[i]) - 1;
+	map->width = ft_strlen(map->arr[i]);
 	while (map->arr[j])
 	{
-		if (map->arr[j][0] != '1' || map->arr[j][last_column] != '1')
+		if (map->arr[j][0] != '1' || map->arr[j][map->width - 1] != '1')
 			end("Invalid map: Sides not closed.\n", game, 1);
 		j++;
 	}
+	map->height = j;
 	j--;
 	while (map->arr[0][i] && map->arr[j][i])
 	{
 		if (map->arr[0][i] != '1')
-			end("Invalid map: 1st row not closed.\n", game, 1);
+			end("Invalid map: First row not closed.\n", game, 1);
 		if (map->arr[j][i] != '1')
 			end("Invalid map: Last row not closed.\n", game, 1);
 		i++;
 	}
 }
 /*
-int	check_valid_path(t_data *game, t_map *map)
+int	check_valid_path(t_data *game, char **map, int x, int y)
 {
+	if (!ft_strchr("0CEP", map[y][x])
 }
 */
-void	check_components(t_data *game, t_map *map)
+void	init_components(t_data *game, t_map *map)
 {
 	int	i;
 	int	j;
@@ -75,32 +75,28 @@ void	check_components(t_data *game, t_map *map)
 				game->player.x = i;
 				game->player.y = j;
 			}
-			else if (map->arr[j][i] == 'C')
-				game->coins++;
 			else if (map->arr[j][i] == 'E')
 				game->exit++;
+			else if (map->arr[j][i] == 'C')
+				game->coins++;
 			i++;
 		}
 		j++;
 	}
-	if (game->start_pos != 1)
-		end("Invalid map: Multiple start pos.\n", game, 1);
-	if (game->exit != 1)
-		end("Invalid map: Multiple exits.\n", game, 1);
 }
 
-int	check_valid_map(t_data *game, t_map *map, char *line)
+int	check_valid_map(t_data *game, t_map *map)
 {
-	if (!ft_strchr(line, 'E'))
-		end("Invalid map: No exit found.\n", game, 1);
-	else if (!ft_strchr(line, 'C'))
-		end("Invalid map: No collectible found.\n", game, 1);
-	else if (!ft_strchr(line, 'P'))
-		end("Invalid map: No start pos found.\n", game, 1);
-	if (!is_rectangle(map))
-		end("Invalid map: Must be rectangular.\n", game, 1);
+	check_rectangle(game, map);
 	check_closed(game, map);
-	check_components(game, map);
+	init_components(game, map);
+	if (game->start_pos != 1)
+		end("Invalid map: Must have 1 player.\n", game, 1);
+	else if (game->exit != 1)
+		end("Invalid map: Must have 1 exit.\n", game, 1);
+	else if (game->coins == 0)
+		end("Invalid map: No collectible found.\n", game, 1);
+	//check_valid_path(game, map->arr, game->player.x, game->player.y);
 	return (1);
 }
 
@@ -127,7 +123,7 @@ void	open_map(t_data *game, char *map_path)
 		free(temp);
 	}
 	new_map.arr = ft_split(total_lines, '\n');
-	if (check_valid_map(game, &new_map, total_lines))
+	if (check_valid_map(game, &new_map))
 		printf("valid map\ncoins: %i\n", game->coins);
 	game->map = new_map;
 }

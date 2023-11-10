@@ -6,7 +6,7 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/20 16:46:22 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/10 13:09:10 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/10 18:31:31 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ typedef struct s_sprite
 typedef struct s_map
 {
 	int	fd;
+	int	width;
+	int	height;
 	char	**arr;
 }	t_map;
 
