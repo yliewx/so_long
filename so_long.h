@@ -6,7 +6,7 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/20 16:46:22 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/10 18:31:31 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/12 18:18:12 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,40 +38,83 @@
 
 /*image paths*/
 
-# define FLOOR "assets/PixelTexturePack/xpm/GRAYROCKS.xpm"
-# define WIDTH 32
-# define HEIGHT 32
+# define WALL_XPM "./assets/xpm/GRAYROCKS.xpm"
+# define FLOOR_XPM "./assets/xpm/DIRT.xpm"
+# define PLAYER_XPM "./assets/xpm/BIGLEAVES.xpm"
+# define COIN_XPM "./assets/xpm/TALLGRASS.xpm"
+# define EXIT_XPM "./assets/xpm/FLATSTONES.xpm"
+# define IMG_SIZE 32
+
+/*text colour*/
+
+# define B_BROWN "\033[1;33m"
+# define RESET "\033[0m"
 
 /*structs*/
 
-typedef struct s_sprite
+typedef struct s_img
 {
-	void	*img_ptr;
+	void	*ptr;
 	int	x;
 	int	y;
-}	t_sprite;
+}	t_img;
 
 typedef struct s_map
 {
-	int	fd;
-	int	width;
-	int	height;
 	char	**arr;
+	char	*full_line;
+	int	fd;
+	int	rows;
+	int	columns;
+	int	player_x;
+	int	player_y;
+	int	valid_path;
 }	t_map;
+
+typedef struct s_count
+{
+	int	start;
+	int	coins;
+	int	exit;
+	int	movements;
+}	t_count;
 
 typedef struct s_data
 {
 	void	*mlx_ptr;
 	void	*win_ptr;
 	t_map	map;
-	t_sprite	floor;
-	t_sprite	player;
-	int	start_pos;
-	int	coins;
-	int	exit;
+	t_img	img_wall;
+	t_img	img_floor;
+	t_img	img_player;
+	t_img	img_coin;
+	t_img	img_exit;
+	t_count	c;
 }	t_data;
 
+/*init_game.c*/
+void	init_variables(t_data *game);
+
+/*init_map.c*/
 void	open_map(t_data *game, char *map_path);
-void	end(char *message, t_data *data, int exit_code);
+void	check_valid_map(t_data *game, t_map *map, char *line);
+
+/*graphics.c*/
+void	new_sprite(t_data *game, t_img *sprite, char *path);
+void	render_sprite(t_data *game, t_img *sprite, int x, int y);
+void	render_map(t_data *game, t_map *map);
+
+/*exit_utils.c*/
+void	end(char *message, t_data *game, int exit_code);
+void	print_msg(char *message, int fd);
+
+/*verify_map.c*/
+void	check_rectangle(t_data *game, t_map *map);
+void	check_closed(t_data *game, t_map *map);
+void	init_components(t_data *game, t_map *map);
+void	check_empty_lines(t_data *game, char *line);
+
+/*input_handler.c*/
+int	test_keypress(int keysym, t_data *data);
 
 #endif

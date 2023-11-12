@@ -13,7 +13,8 @@ LIB_DIR = libft
 MLX_DIR = minilibx-linux
 
 # so_long targets
-TARGET = so_long.c verify_map.c exit_utils.c
+TARGET = init_game.c init_map.c verify_map.c graphics.c \
+	input_handler.c exit_utils.c
 SRCS = $(addprefix srcs/, $(TARGET))
 
 # libft targets
