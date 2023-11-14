@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_sprites.c                                   :+:      :+:    :+:   */
+/*   graphics.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 18:13:32 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/12 17:56:40 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/14 17:34:21 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	new_sprite(t_data *game, t_img *sprite, char *path)
 {
 	sprite->ptr = mlx_xpm_file_to_image(game->mlx_ptr, path,
-		&sprite->x, &sprite->y);
+			&sprite->x, &sprite->y);
 }
 
 void	render_sprite(t_data *game, t_img *sprite, int x, int y)

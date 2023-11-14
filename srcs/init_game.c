@@ -6,7 +6,7 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/20 16:46:30 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/12 18:50:45 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/14 17:34:59 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	init_window(t_data *game)
 	if (window_x > game->screen_x || window_y > game->screen_y)
 		end("Map size is too large.\n", game, 1);
 	game->win_ptr = mlx_new_window(game->mlx_ptr,
-		window_x, window_y, "so_long");
+			window_x, window_y, "so_long");
 }
 
 void	init_sprites(t_data *game)
@@ -63,9 +63,7 @@ void	init_game(char **argv)
 	init_window(&game);
 	init_sprites(&game);
 	render_map(&game, &game.map);
-	//register key hook
 	mlx_key_hook(game.win_ptr, test_keypress, &game);
-	//loop over mlx pointer
 	mlx_loop(game.mlx_ptr);
 }
 
