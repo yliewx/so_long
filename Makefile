@@ -1,36 +1,34 @@
 # declare makefile variables
 NAME = so_long
-LIB_NAME = libft.a
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-MLX_FLAGS = -lmlx
-X_FLAGS = -lXext -lX11
-LIB = ar -rcs
 RM = rm -f
 
-# source directories
-LIB_DIR = libft
-MLX_DIR = minilibx-linux
+# libft path and flags
+LIBFT = libft.a
+LIB_DIR = ./libft
+LIB_FLAGS = -L $(LIB_DIR) -lft
+
+# mlx path and flags
+ifeq ($(shell uname), Linux)
+	MLX_DIR = ./mlx_linux
+	MLX_NAME = libmlx_Linux.a
+	MLX_LIB = $(addprefix $(MLX_DIR)/, $(MLX_NAME))
+	MLX_INC = -I/usr/include -I $(MLX_DIR)
+	MLX_FLAGS = -L $(MLX_DIR) -lmlx -L/usr/lib/X11 -lXext -lX11
+else
+	MLX_DIR = ./mlx_macos
+	MLX_NAME = libmlx.dylib
+	MLX_LIB = $(addprefix $(MLX_DIR)/, $(MLX_NAME))
+	MLX_INC = -I/opt/X11/include -I $(MLX_DIR)
+	MLX_FLAGS = -L $(MLX_DIR) -lmlx -L/usr/X11/lib -lXext -lX11 \
+	-framework OpenGL -framework AppKit
+endif
 
 # so_long targets
 TARGET = init_game.c init_map.c verify_map.c graphics.c \
 	input_handler.c exit_utils.c
 SRCS = $(addprefix srcs/, $(TARGET))
-
-# libft targets
-LIB_TARGET = ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c \
-	ft_isascii.c ft_isdigit.c ft_isprint.c ft_itoa.c ft_memchr.c \
-	ft_memcmp.c ft_memcpy.c ft_memmove.c ft_memset.c ft_putchar_fd.c \
-	ft_putendl_fd.c ft_putnbr_fd.c ft_putstr_fd.c ft_split.c ft_strchr.c \
-	ft_strdup.c ft_striteri.c ft_strjoin.c ft_strlcat.c ft_strlcpy.c \
-	ft_strlen.c ft_strmapi.c ft_strncmp.c ft_strnstr.c ft_strrchr.c \
-	ft_strtrim.c ft_substr.c ft_tolower.c ft_toupper.c \
-	ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c \
-	ft_lstiter.c ft_lstlast.c ft_lstmap.c ft_lstnew.c ft_lstsize.c \
-	ft_printf.c ft_putchar.c ft_putstr.c ft_putnbr.c ft_puthex.c \
-	get_next_line.c
-LIB_SRCS = $(addprefix srcs/, $(LIB_TARGET))
-LIB_OBJS = $(LIB_SRCS:.c=.o)
 
 # colours
 GREEN = \033[0;32m
@@ -42,24 +40,33 @@ END = \033[0m
 # RULES
 # all = create library from sub-make
 
-all: $(LIB_NAME) $(NAME)
+all: $(MLX_LIB) $(LIBFT) $(NAME)
 
-$(NAME): $(SRCS) $(LIB_NAME)
-	@$(CC) $(CFLAGS) $(SRCS) -o $(NAME) -L $(LIB_DIR) -l ft -L $(MLX_DIR) $(MLX_FLAGS) $(X_FLAGS) -I $(MLX_DIR)
+$(NAME): $(SRCS) $(MLX_LIB) $(LIBFT)
+	@echo "\n$(B_BROWN)[ COMPILING: $(NAME) ]$(END)"
+	@$(CC) $(CFLAGS) $(SRCS) -o $(NAME) $(LIB_FLAGS) $(MLX_FLAGS) $(MLX_INC)
 	@echo "$(B_GREEN)$(NAME) compiled.$(END)"
 
-$(LIB_NAME):
-	cd $(LIB_DIR) && $(MAKE)
+$(LIBFT):
+	@echo "\n$(B_BROWN)[ COMPILING: $(LIBFT) ]$(END)"
+	@make -s -C $(LIB_DIR)
+
+$(MLX_LIB):
+	@echo "\n$(B_BROWN)[ COMPILING: $(MLX_LIB) ]$(END)"
+	@make -s -C $(MLX_DIR)
+	@cp $(MLX_LIB) ./
+	@echo "$(B_GREEN)$(MLX_LIB) compiled.$(END)"
 
 # remove temporary generated files
 clean:
-	@cd $(LIB_DIR) && $(RM) $(LIB_OBJS)
-	@echo "$(B_GREEN)Removed all obj files.$(END)"
+	@make clean -s -C $(LIB_DIR)
+	@make clean -s -C $(MLX_DIR)
 
 # remove library and executable file
 fclean: clean
-	@$(RM) $(NAME) && cd $(LIB_DIR) && $(RM) $(LIB_NAME)
-	@echo "$(B_GREEN)Removed $(NAME) and $(LIB_NAME).$(END)"
+	@$(RM) $(NAME) && $(RM) $(MLX_NAME)
+	@cd $(LIB_DIR) && $(RM) $(LIBFT)
+	@echo "$(B_GREEN)Removed $(NAME), $(MLX_NAME) and $(LIBFT).$(END)"
 
 re: fclean all
 

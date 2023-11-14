@@ -31,7 +31,10 @@ void	check_sprite(t_data *game, int c, int x, int y)
 	else if (c == '0')
 		render_sprite(game, &game->img_floor, x, y);
 	else if (c == 'P')
+	{
+		render_sprite(game, &game->img_floor, x, y);
 		render_sprite(game, &game->img_player, x, y);
+	}
 	else if (c == 'C')
 		render_sprite(game, &game->img_coin, x, y);
 	else if (c == 'E')
@@ -44,12 +47,12 @@ void	render_map(t_data *game, t_map *map)
 	int	j;
 
 	j = 0;
-	while (map->arr[j])
+	while (map->grid[j])
 	{
 		i = 0;
-		while (map->arr[j][i])
+		while (map->grid[j][i])
 		{
-			check_sprite(game, map->arr[j][i], i, j);
+			check_sprite(game, map->grid[j][i], i, j);
 			i++;
 		}
 		j++;

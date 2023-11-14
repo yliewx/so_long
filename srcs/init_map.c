@@ -15,24 +15,56 @@
 void	set_map_params(t_map *map, char *line)
 {
 	printf("%s\n", line);
-	while (map->arr[map->rows])
+	while (map->grid[map->rows])
 		map->rows++;
-	map->columns = ft_strlen(map->arr[0]);
+	map->columns = ft_strlen(map->grid[0]);
+}
+
+void	init_components(t_data *game, t_map *map)
+{
+	int	i;
+	int	j;
+
+	j = 0;
+	while (map->grid[j])
+	{
+		i = 0;
+		while (map->grid[j][i])
+		{
+			if (!ft_strchr("01CEP\n", map->grid[j][i]))
+				end("Invalid char: Must be 01CEP.\n", game, 1);
+			else if (map->grid[j][i] == 'P')
+			{
+				map->start++;
+				game->player.x = i;
+				game->player.y = j;
+			}
+			else if (map->grid[j][i] == 'E')
+				map->exit++;
+			else if (map->grid[j][i] == 'C')
+				map->coins++;
+			i++;
+		}
+		j++;
+	}
 }
 
 void	check_valid_map(t_data *game, t_map *map, char *line)
 {
+	char	**temp_grid;
+
 	check_empty_lines(game, line);
 	check_rectangle(game, map);
 	check_closed(game, map);
 	init_components(game, map);
-	if (game->c.start != 1)
-		end("Invalid map: Must have 1 player.\n", game, 1);
-	else if (game->c.exit != 1)
-		end("Invalid map: Must have 1 exit.\n", game, 1);
-	else if (game->c.coins == 0)
-		end("Invalid map: No collectible found.\n", game, 1);
-	//check_valid_path(game, map->arr, game->player.x, game->player.y);
+	check_components(game, map);
+	temp_grid = ft_split(line, '\n');
+	check_valid_path(game, temp_grid, game->player.x, game->player.y);
+	if (!game->map.valid_path)
+	{
+		free_map_grid(game->map, temp_grid);
+		end("Invalid map: No valid path found.\n", game, 1);
+	}
 }
 
 void	open_map(t_data *game, char *map_path)
@@ -57,6 +89,6 @@ void	open_map(t_data *game, char *map_path)
 	}
 	if (!game->map.full_line[0])
 		end("Invalid map: Map is empty.\n", game, 1);
-	game->map.arr = ft_split(game->map.full_line, '\n');
+	game->map.grid = ft_split(game->map.full_line, '\n');
 	set_map_params(&(game->map), game->map.full_line);
 }

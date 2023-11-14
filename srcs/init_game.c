@@ -14,14 +14,31 @@
 
 void	init_variables(t_data *game)
 {
-	game->c.start = 0;
-	game->c.coins = 0;
-	game->c.exit = 0;
-	game->c.movements = 0;
 	game->map.rows = 0;
 	game->map.columns = 0;
-	game->map.valid_path = 0;
-	game->map.arr = NULL;
+	game->map.start = 0;
+	game->map.coins = 0;
+	game->map.exit = 0;
+	game->map.valid_path = false;
+	game->map.grid = NULL;
+	game->player.direction = down;
+	game->current.coins = 0;
+	game->current.movements = 0;
+	game->current.exit_found = false;
+}
+
+void	init_window(t_data *game)
+{
+	int	window_x;
+	int	window_y;
+
+	window_x = IMG_SIZE * game->map.columns;
+	window_y = IMG_SIZE * game->map.rows;
+	mlx_get_screen_size(game->mlx_ptr, &game->screen_x, &game->screen_y);
+	if (window_x > game->screen_x || window_y > game->screen_y)
+		end("Map size is too large.\n", game, 1);
+	game->win_ptr = mlx_new_window(game->mlx_ptr,
+		window_x, window_y, "so_long");
 }
 
 void	init_sprites(t_data *game)
@@ -33,7 +50,7 @@ void	init_sprites(t_data *game)
 	new_sprite(game, &game->img_exit, EXIT_XPM);
 }
 
-//check window screen size before creating window
+//move "game.map.valid_path = 1" to the relevant function later
 void	init_game(char **argv)
 {
 	t_data	game;
@@ -41,10 +58,9 @@ void	init_game(char **argv)
 	init_variables(&game);
 	open_map(&game, argv[1]);
 	check_valid_map(&game, &game.map, game.map.full_line);
+	game.map.valid_path = 1;
 	game.mlx_ptr = mlx_init();
-	game.win_ptr = mlx_new_window(game.mlx_ptr,
-		IMG_SIZE * game.map.columns,
-		IMG_SIZE * game.map.rows, "so_long");
+	init_window(&game);
 	init_sprites(&game);
 	render_map(&game, &game.map);
 	//register key hook

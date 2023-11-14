@@ -14,12 +14,12 @@
 
 void	print_msg(char *message, int fd)
 {
-	ft_putstr_fd(B_BROWN, fd);
+	ft_putstr_fd(RED, fd);
 	ft_putstr_fd(message, fd);
 	ft_putstr_fd(RESET, fd);
 }
 
-void	free_map_arr(t_map map, char **arr)
+void	free_map_grid(t_map map, char **grid)
 {
 	int	j;
 
@@ -27,8 +27,8 @@ void	free_map_arr(t_map map, char **arr)
 	printf("\trows: %i, columns: %i\n", map.rows, map.columns);
 	while (j >= 0)
 	{
-		free(arr[j]);
-		printf("\tfreed arr[%i]\n", j);
+		free(grid[j]);
+		printf("\tfreed grid[%i]\n", j);
 		j--;
 	}
 	printf("done freeing\n");
@@ -38,15 +38,14 @@ void	end(char *message, t_data *game, int exit_code)
 {
 	if (exit_code != 0)
 		print_msg("Error\n", 2);
-		//ft_putstr_fd("Error\n", 2);
 	if (message)
 		print_msg(message, 2);
-	if (game->map.arr)
+	if (game->map.grid)
 	{
-		free_map_arr(game->map, game->map.arr);
+		free_map_grid(game->map, game->map.grid);
 		free(game->map.full_line);
 	}
-	if (game->win_ptr)
+	if (game->map.valid_path)
 	{
 		mlx_destroy_window(game->mlx_ptr, game->win_ptr);
 		free(game->mlx_ptr);

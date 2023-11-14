@@ -44,7 +44,7 @@ $(NAME): $(OBJS)
 
 $(OBJS): %.o: %.c
 	@$(CC) $(CFLAGS) -I $(INC) -c $< -o $@
-	@echo "$(BROWN)$< compiled.$(END)"
+	@echo "\t$(BROWN)$< compiled.$(END)"
 
 # compile executable for testing
 test: $(SRCS)

@@ -16,42 +16,48 @@ int	is_accessible(t_map *map, int x, int y)
 {
 	if (y - 1 >= 0)
 	{
-		if (ft_strchr("0CEP", map->arr[y][x]))
+		if (ft_strchr("0CEP", map->grid[y][x]))
 			return (1);
 	}
 	printf("not accessible\n");
 	return (0);
 }
 
-void	player_movement(t_map *map, int dir)
+void	player_movement(t_data *game, t_map *map, int dir)
 {
 	int	current_x;
 	int	current_y;
 
-	current_x = map->player_x;
-	current_y = map->player_y;
-	if (dir == 1)
+	current_x = game->player.x;
+	current_y = game->player.y;
+	if (dir == up)
 	{
 		if (is_accessible(map, current_x, current_y - 1))
 		{
-			map->arr[current_y][current_x] = '0';
-			map->player_y = current_y - 1;
+			map->grid[current_y][current_x] = '0';
+			game->player.y = current_y - 1;
 			printf("moved up\n");
 		}
 	}
+	else if (dir == down)
+		printf("moved down\n");
+	else if (dir == left)
+		printf("moved left\n");
+	else if (dir == right)
+		printf("moved right\n");
 }
 
 int	test_keypress(int keysym, t_data *game)
 {
 	printf("Key pressed: %i\n\n", keysym);
 	if (keysym == W_KEY || keysym == UP_KEY)
-		player_movement(&game->map, 1);
+		player_movement(game, &game->map, up);
 	else if (keysym == S_KEY || keysym == DOWN_KEY)
-		player_movement(&game->map, 2);
+		player_movement(game, &game->map, down);
 	else if (keysym == A_KEY || keysym == LEFT_KEY)
-		player_movement(&game->map, 3);
+		player_movement(game, &game->map, left);
 	else if (keysym == D_KEY || keysym == RIGHT_KEY)
-		player_movement(&game->map, 4);
+		player_movement(game, &game->map, right);
 	else if (keysym == ESC)
 		end("Quitting game.\n", game, 0);
 	return (0);
