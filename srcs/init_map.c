@@ -6,11 +6,11 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 15:26:09 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/12 16:43:21 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/15 18:04:19 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../so_long.h"
+#include "../includes/so_long.h"
 
 void	set_map_params(t_map *map, char *line)
 {
@@ -59,10 +59,10 @@ void	check_valid_map(t_data *game, t_map *map, char *line)
 	init_components(game, map);
 	check_components(game, map);
 	temp_grid = ft_split(line, '\n');
-	check_valid_path(game, temp_grid, game->player.x, game->player.y);
+	check_valid_path(game, &temp_grid, game->player.x, game->player.y);
 	if (!game->map.valid_path)
 	{
-		free_map_grid(game->map, temp_grid);
+		free_map_grid(game->map, &temp_grid);
 		end("Invalid map: No valid path found.\n", game, 1);
 	}
 }
@@ -86,9 +86,13 @@ void	open_map(t_data *game, char *map_path)
 		temp = game->map.full_line;
 		game->map.full_line = ft_strjoin(temp, current_line);
 		free(temp);
+		free(current_line);
 	}
 	if (!game->map.full_line[0])
+	{
+		free(game->map.full_line);
 		end("Invalid map: Map is empty.\n", game, 1);
+	}
 	game->map.grid = ft_split(game->map.full_line, '\n');
 	set_map_params(&(game->map), game->map.full_line);
 }

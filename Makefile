@@ -27,7 +27,7 @@ endif
 
 # so_long targets
 TARGET = init_game.c init_map.c verify_map.c graphics.c \
-	input_handler.c exit_utils.c
+	movement.c exit_utils.c
 SRCS = $(addprefix srcs/, $(TARGET))
 
 # colours

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../so_long.h"
+#include "../includes/so_long.h"
 
 void	check_empty_lines(t_data *game, char *line)
 {
@@ -76,16 +76,16 @@ void	check_components(t_data *game, t_map *map)
 		end("Invalid map: No collectible found.\n", game, 1);
 }
 
-void	check_valid_path(t_data *game, char **grid, int x, int y)
+void	check_valid_path(t_data *game, char ***grid, int x, int y)
 {
 	if (y - 1 < 0 || x - 1 < 0 || y + 1 >= game->map.rows
-		|| x + 1 >= game->map.columns || grid[y][x] == '1')
+		|| x + 1 >= game->map.columns || (*grid)[y][x] == '1')
 		return ;
-	if (grid[y][x] == 'E')
+	if ((*grid)[y][x] == 'E')
 		game->current.exit_found = true;
-	if (grid[y][x] == 'C')
+	if ((*grid)[y][x] == 'C')
 		game->current.coins++;
-	grid[y][x] = '1';
+	(*grid)[y][x] = '1';
 	if (game->current.exit_found && game->map.coins == game->current.coins)
 	{
 		game->map.valid_path = true;

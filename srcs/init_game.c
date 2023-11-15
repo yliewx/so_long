@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../so_long.h"
+#include "../includes/so_long.h"
 
 void	init_variables(t_data *game)
 {
@@ -60,8 +60,8 @@ void	init_game(char **argv)
 	check_valid_map(&game, &game.map, game.map.full_line);
 	game.map.valid_path = 1;
 	game.mlx_ptr = mlx_init();
-	init_window(&game);
 	init_sprites(&game);
+	init_window(&game);
 	render_map(&game, &game.map);
 	mlx_key_hook(game.win_ptr, test_keypress, &game);
 	mlx_loop(game.mlx_ptr);
