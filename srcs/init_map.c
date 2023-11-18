@@ -6,7 +6,7 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 15:26:09 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/15 18:04:19 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/18 18:47:52 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,9 @@ void	check_valid_map(t_data *game, t_map *map, char *line)
 	check_components(game, map);
 	temp_grid = ft_split(line, '\n');
 	check_valid_path(game, &temp_grid, game->player.x, game->player.y);
+	free_map_grid(game->map, &temp_grid);
 	if (!game->map.valid_path)
-	{
-		free_map_grid(game->map, &temp_grid);
 		end("Invalid map: No valid path found.\n", game, 1);
-	}
 }
 
 void	open_map(t_data *game, char *map_path)
@@ -94,5 +92,4 @@ void	open_map(t_data *game, char *map_path)
 		end("Invalid map: Map is empty.\n", game, 1);
 	}
 	game->map.grid = ft_split(game->map.full_line, '\n');
-	set_map_params(&(game->map), game->map.full_line);
 }

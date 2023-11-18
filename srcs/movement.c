@@ -6,7 +6,7 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 15:28:34 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/15 18:28:33 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/18 18:57:46 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,8 @@ void	update_map(t_data *game, char **grid, t_player prev, t_player new)
 	ft_printf("Movements: %i\n", game->current.movements);
 }
 
-void	player_movement(t_data *game, t_map *map, int dir)
+void	player_movement(t_data *game, t_map *map, t_player current, int dir)
 {
-	t_player	current;
-
-	current.x = game->player.x;
-	current.y = game->player.y;
 	if (dir == up && is_accessible(map, current.x, current.y - 1))
 	{
 		game->player.y -= 1;
@@ -64,27 +60,32 @@ void	player_movement(t_data *game, t_map *map, int dir)
 	}
 	else if (dir == left && is_accessible(map, current.x - 1, current.y))
 	{
+		game->player.direction = left;
 		game->player.x -= 1;
 		update_map(game, map->grid, current, game->player);
 	}
 	else if (dir == right && is_accessible(map, current.x + 1, current.y))
 	{
+		game->player.direction = right;
 		game->player.x += 1;
 		update_map(game, map->grid, current, game->player);
 	}
 }
 
-int	test_keypress(int keysym, t_data *game)
+int	check_keypress(int keysym, t_data *game)
 {
-	//printf("Key pressed: %i\n\n", keysym);
+	t_player	current;
+
+	current.x = game->player.x;
+	current.y = game->player.y;
 	if (keysym == W_KEY || keysym == UP_KEY)
-		player_movement(game, &game->map, up);
+		player_movement(game, &game->map, current, up);
 	else if (keysym == S_KEY || keysym == DOWN_KEY)
-		player_movement(game, &game->map, down);
+		player_movement(game, &game->map, current, down);
 	else if (keysym == A_KEY || keysym == LEFT_KEY)
-		player_movement(game, &game->map, left);
+		player_movement(game, &game->map, current, left);
 	else if (keysym == D_KEY || keysym == RIGHT_KEY)
-		player_movement(game, &game->map, right);
+		player_movement(game, &game->map, current, right);
 	else if (keysym == ESC)
 		end("Quitting game.\n", game, 0);
 	return (0);

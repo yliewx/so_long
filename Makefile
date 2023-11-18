@@ -26,7 +26,7 @@ else
 endif
 
 # so_long targets
-TARGET = init_game.c init_map.c verify_map.c graphics.c \
+TARGET = init_game.c init_map.c verify_map.c render_sprites.c sprite_utils.c \
 	movement.c exit_utils.c
 SRCS = $(addprefix srcs/, $(TARGET))
 

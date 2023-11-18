@@ -6,7 +6,7 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 16:37:53 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/15 18:08:10 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/18 18:53:04 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,23 @@ void	free_map_grid(t_map map, char ***grid)
 		j--;
 	}
 	free(*grid);
-	printf("done freeing\n");
 }
 
 void	free_sprites(t_data *game)
 {
 	mlx_destroy_image(game->mlx_ptr, game->img_wall.ptr);
 	mlx_destroy_image(game->mlx_ptr, game->img_floor.ptr);
-	mlx_destroy_image(game->mlx_ptr, game->img_player.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->img_player_L.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->img_player_R.ptr);
 	mlx_destroy_image(game->mlx_ptr, game->img_coin.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->base_player_L.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->base_player_R.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->base_coin.ptr);
 	mlx_destroy_image(game->mlx_ptr, game->img_exit.ptr);
 }
 
-void	end(char *message, t_data *game, int exit_code)
+int	close_game(t_data *game, int exit_code)
 {
-	if (exit_code != 0)
-	{
-		print_msg("Error\n", 2);
-		print_msg(message, 2);
-	}
-	else
-		print_msg(message, 1);
 	if (game->map.grid)
 	{
 		free_map_grid(game->map, &game->map.grid);
@@ -72,4 +68,16 @@ void	end(char *message, t_data *game, int exit_code)
 		free(game->mlx_ptr);
 	}
 	exit(exit_code);
+}
+
+void	end(char *message, t_data *game, int exit_code)
+{
+	if (exit_code != 0)
+	{
+		print_msg("Error\n", 2);
+		print_msg(message, 2);
+	}
+	else
+		print_msg(message, 1);
+	close_game(game, exit_code);
 }

@@ -6,7 +6,7 @@
 /*   By: yliew <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/20 16:46:22 by yliew             #+#    #+#             */
-/*   Updated: 2023/11/15 16:11:34 by yliew            ###   ########.fr       */
+/*   Updated: 2023/11/16 14:02:38 by yliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <fcntl.h>
 # include <unistd.h>
 # include <stdbool.h>
+# include <time.h>
 
 /*platform-specific definitions*/
 
@@ -52,11 +53,12 @@
 
 /*image paths*/
 
-# define WALL_XPM "./assets/xpm/ICEYROCKS.xpm"
-# define FLOOR_XPM "./assets/xpm/SNOW.xpm"
-# define PLAYER_XPM "./assets/ducky/idle/idle_0_L.xpm"
-# define COIN_XPM "./assets/xpm/TALLGRASS.xpm"
-# define EXIT_XPM "./assets/xpm/FLATSTONES.xpm"
+# define WALL_XPM "./assets/tiles/wall_front.xpm"
+# define FLOOR_XPM "./assets/tiles/floor_1.xpm"
+# define PLAYER_IDLE_L_XPM "./assets/ducky/idle/idle_0_L.xpm"
+# define PLAYER_IDLE_R_XPM "./assets/ducky/idle/idle_0_R.xpm"
+# define COIN_XPM "./assets/coin/egg_24.xpm"
+# define EXIT_XPM "./assets/tiles/door_0.xpm"
 # define IMG_SIZE 48
 
 /*text colour*/
@@ -81,8 +83,12 @@ enum e_direction
 typedef struct s_img
 {
 	void	*ptr;
+	void	*addr;
 	int	x;
 	int	y;
+	int	bpp;
+	int	line_size;
+	int	endian;
 }	t_img;
 
 typedef struct s_player
@@ -121,8 +127,12 @@ typedef struct s_data
 	t_count	current;
 	t_img	img_wall;
 	t_img	img_floor;
-	t_img	img_player;
+	t_img	img_player_L;
+	t_img	img_player_R;
 	t_img	img_coin;
+	t_img	base_player_L;
+	t_img	base_player_R;
+	t_img	base_coin;
 	t_img	img_exit;
 	int	screen_x;
 	int	screen_y;
@@ -135,17 +145,21 @@ void	init_variables(t_data *game);
 void	open_map(t_data *game, char *map_path);
 void	check_valid_map(t_data *game, t_map *map, char *line);
 void	init_components(t_data *game, t_map *map);
+void	set_map_params(t_map *map, char *line);
 
 /*graphics.c*/
 void	new_sprite(t_data *game, t_img *sprite, char *path);
 void	check_sprite(t_data *game, int c, int x, int y);
+void	get_sprite_info(t_img *sprite);
 void	render_sprite(t_data *game, t_img *sprite, int x, int y);
 void	render_map(t_data *game, t_map *map);
+void	put_sprite_to_base(t_img *base, t_img *sprite, int x, int y);
 
 /*exit_utils.c*/
 void	end(char *message, t_data *game, int exit_code);
 void	free_map_grid(t_map map, char ***grid);
 void	print_msg(char *message, int fd);
+int	close_game(t_data *game, int exit_code);
 
 /*verify_map.c*/
 void	check_rectangle(t_data *game, t_map *map);
@@ -155,6 +169,6 @@ void	check_components(t_data *game, t_map *map);
 void	check_valid_path(t_data *game, char ***grid, int x, int y);
 
 /*input_handler.c*/
-int	test_keypress(int keysym, t_data *data);
+int	check_keypress(int keysym, t_data *data);
 
 #endif
