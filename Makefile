@@ -33,8 +33,8 @@ SRCS = $(addprefix srcs/, $(TARGET))
 BONUS_TARGET = init_game_bonus.c init_map_bonus.c verify_map_bonus.c \
 	init_sprites_bonus.c render_sprites_bonus.c \
 	render_wall_bonus.c sprite_utils_bonus.c \
-	movement_bonus.c animation_bonus.c enemy_bonus.c exit_utils_bonus.c \
-	message_bonus.c
+	movement_bonus.c animation_bonus.c enemy_bonus.c \
+	exit_utils_bonus.c message_bonus.c
 BONUS_SRCS = $(addprefix srcs_bonus/, $(BONUS_TARGET))
 
 # colours
