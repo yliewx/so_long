@@ -12,20 +12,21 @@
 
 #include "../includes/so_long.h"
 
-void	set_map_params(t_map *map, char *line)
+void	set_map_params(t_map *map)
 {
-	printf("%s\n", line);
 	while (map->grid[map->rows])
 		map->rows++;
 	map->columns = ft_strlen(map->grid[0]);
 }
 
-void	init_components(t_data *game, t_map *map)
+void	set_pos(t_pos *subject, int x, int y)
 {
-	int	i;
-	int	j;
+	subject->x = x;
+	subject->y = y;
+}
 
-	j = 0;
+void	init_components(t_game *game, t_map *map, int i, int j)
+{
 	while (map->grid[j])
 	{
 		i = 0;
@@ -36,8 +37,7 @@ void	init_components(t_data *game, t_map *map)
 			else if (map->grid[j][i] == 'P')
 			{
 				map->start++;
-				game->player.x = i;
-				game->player.y = j;
+				set_pos(&game->player.current, i, j);
 			}
 			else if (map->grid[j][i] == 'E')
 				map->exit++;
@@ -49,23 +49,24 @@ void	init_components(t_data *game, t_map *map)
 	}
 }
 
-void	check_valid_map(t_data *game, t_map *map, char *line)
+void	check_valid_map(t_game *game, t_map *map, char *line)
 {
 	char	**temp_grid;
 
 	check_empty_lines(game, line);
 	check_rectangle(game, map);
 	check_closed(game, map);
-	init_components(game, map);
+	init_components(game, map, 0, 0);
 	check_components(game, map);
 	temp_grid = ft_split(line, '\n');
-	check_valid_path(game, &temp_grid, game->player.x, game->player.y);
+	check_valid_path(game, &temp_grid,
+		game->player.current.x, game->player.current.y);
 	free_map_grid(game->map, &temp_grid);
 	if (!game->map.valid_path)
 		end("Invalid map: No valid path found.\n", game, 1);
 }
 
-void	open_map(t_data *game, char *map_path)
+void	open_map(t_game *game, char *map_path)
 {
 	char	*current_line;
 	char	*temp;

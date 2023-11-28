@@ -12,49 +12,55 @@
 
 #include "../includes/so_long.h"
 
-void	print_msg(char *message, int fd)
-{
-	char	*colour;
-
-	if (fd == 2)
-		colour = RED;
-	else
-		colour = GREEN;
-	ft_putstr_fd(colour, fd);
-	ft_putstr_fd(message, fd);
-	ft_putstr_fd(RESET, fd);
-}
-
 void	free_map_grid(t_map map, char ***grid)
 {
 	int	j;
 
 	j = map.rows - 1;
-	printf("\trows: %i, columns: %i\n", map.rows, map.columns);
 	while (j >= 0)
 	{
 		free((*grid)[j]);
-		printf("\tfreed grid[%i]\n", j);
 		j--;
 	}
 	free(*grid);
 }
 
-void	free_sprites(t_data *game)
+void	free_sprites(t_game *game)
 {
-	mlx_destroy_image(game->mlx_ptr, game->img_wall.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->display.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.up_l.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.up_m.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.up_r.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.down_l.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.down_m.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.down_r.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.side_l.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.side_m.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.side_r.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->wall.blank.ptr);
 	mlx_destroy_image(game->mlx_ptr, game->img_floor.ptr);
-	mlx_destroy_image(game->mlx_ptr, game->img_player_L.ptr);
-	mlx_destroy_image(game->mlx_ptr, game->img_player_R.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->img_exit_0.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->img_exit_1.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->img_player_l.ptr);
+	mlx_destroy_image(game->mlx_ptr, game->img_player_r.ptr);
 	mlx_destroy_image(game->mlx_ptr, game->img_coin.ptr);
-	mlx_destroy_image(game->mlx_ptr, game->base_player_L.ptr);
-	mlx_destroy_image(game->mlx_ptr, game->base_player_R.ptr);
-	mlx_destroy_image(game->mlx_ptr, game->base_coin.ptr);
-	mlx_destroy_image(game->mlx_ptr, game->img_exit.ptr);
 }
 
-int	close_game(t_data *game, int exit_code)
+int	x_close_window(t_game *game)
 {
+	end("Quitting game.\n", game, 0);
+	return (0);
+}
+
+void	end(char *message, t_game *game, int exit_code)
+{
+	if (exit_code != 0)
+	{
+		print_msg("Error\n", 2);
+		print_msg(message, 2);
+	}
+	else
+		print_msg(message, 1);
 	if (game->map.grid)
 	{
 		free_map_grid(game->map, &game->map.grid);
@@ -64,20 +70,9 @@ int	close_game(t_data *game, int exit_code)
 	{
 		free_sprites(game);
 		mlx_destroy_window(game->mlx_ptr, game->win_ptr);
-		mlx_destroy_display(game->mlx_ptr);
+		if (OS_LINUX)
+			mlx_destroy_display(game->mlx_ptr);
 		free(game->mlx_ptr);
 	}
 	exit(exit_code);
-}
-
-void	end(char *message, t_data *game, int exit_code)
-{
-	if (exit_code != 0)
-	{
-		print_msg("Error\n", 2);
-		print_msg(message, 2);
-	}
-	else
-		print_msg(message, 1);
-	close_game(game, exit_code);
 }

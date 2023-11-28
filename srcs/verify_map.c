@@ -12,7 +12,7 @@
 
 #include "../includes/so_long.h"
 
-void	check_empty_lines(t_data *game, char *line)
+void	check_empty_lines(t_game *game, char *line)
 {
 	int	i;
 
@@ -27,7 +27,7 @@ void	check_empty_lines(t_data *game, char *line)
 	}
 }
 
-void	check_rectangle(t_data *game, t_map *map)
+void	check_rectangle(t_game *game, t_map *map)
 {
 	int	i;
 
@@ -40,7 +40,7 @@ void	check_rectangle(t_data *game, t_map *map)
 	}
 }
 
-void	check_closed(t_data *game, t_map *map)
+void	check_closed(t_game *game, t_map *map)
 {
 	int	i;
 	int	j;
@@ -66,7 +66,7 @@ void	check_closed(t_data *game, t_map *map)
 	}
 }
 
-void	check_components(t_data *game, t_map *map)
+void	check_components(t_game *game, t_map *map)
 {
 	if (map->start != 1)
 		end("Invalid map: Must have 1 player.\n", game, 1);
@@ -76,21 +76,21 @@ void	check_components(t_data *game, t_map *map)
 		end("Invalid map: No collectible found.\n", game, 1);
 }
 
-void	check_valid_path(t_data *game, char ***grid, int x, int y)
+void	check_valid_path(t_game *game, char ***grid, int x, int y)
 {
 	if (y - 1 < 0 || x - 1 < 0 || y + 1 >= game->map.rows
 		|| x + 1 >= game->map.columns || (*grid)[y][x] == '1')
 		return ;
 	if ((*grid)[y][x] == 'E')
-		game->current.exit_found = true;
+		game->map.exit_found = true;
 	if ((*grid)[y][x] == 'C')
-		game->current.coins++;
+		game->player.coins++;
 	(*grid)[y][x] = '1';
-	if (game->current.exit_found && game->map.coins == game->current.coins)
+	if (game->map.exit_found && game->map.coins == game->player.coins)
 	{
 		game->map.valid_path = true;
-		game->current.coins = 0;
-		game->current.exit_found = false;
+		game->map.exit_found = false;
+		game->player.coins = 0;
 		return ;
 	}
 	check_valid_path(game, grid, x, y - 1);

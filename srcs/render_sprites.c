@@ -12,39 +12,49 @@
 
 #include "../includes/so_long.h"
 
-void	new_sprite(t_data *game, t_img *sprite, char *path)
+void	render_to_window(t_game *game, t_img *image, int x, int y)
+{
+	mlx_put_image_to_window(game->mlx_ptr, game->win_ptr,
+		image->ptr, IMG_SIZE * x, IMG_SIZE * y);
+}
+
+void	new_sprite(t_game *game, t_img *sprite, char *path)
 {
 	sprite->ptr = mlx_xpm_file_to_image(game->mlx_ptr, path,
 			&sprite->x, &sprite->y);
 	get_sprite_info(sprite);
 }
 
-void	render_sprite(t_data *game, t_img *sprite, int x, int y)
-{
-	mlx_put_image_to_window(game->mlx_ptr, game->win_ptr,
-		sprite->ptr, IMG_SIZE * x, IMG_SIZE * y);
-}
-
-void	check_sprite(t_data *game, int c, int x, int y)
+void	check_sprite(t_game *game, int c, int x, int y)
 {
 	if (c == '1')
-		render_sprite(game, &game->img_wall, x, y);
+	{
+		check_outer_wall(game, game->map.grid, x, y);
+		check_inner_wall(game, game->map.grid, x, y);
+	}
 	else if (c == '0')
-		render_sprite(game, &game->img_floor, x, y);
+		render_sprite(&game->display, &game->img_floor, x, y);
 	else if (c == 'P')
 	{
+		render_sprite(&game->display, &game->img_floor, x, y);
 		if (game->player.direction == left)
-			render_sprite(game, &game->base_player_L, x, y);
+			render_sprite(&game->display, &game->img_player_l, x, y);
 		else
-			render_sprite(game, &game->base_player_R, x, y);
+			render_sprite(&game->display, &game->img_player_r, x, y);
 	}
 	else if (c == 'C')
-		render_sprite(game, &game->base_coin, x, y);
-	else if (c == 'E')
-		render_sprite(game, &game->img_exit, x, y);
+	{
+		render_sprite(&game->display, &game->img_floor, x, y);
+		render_offset(game, &game->img_coin,
+			IMG_SIZE * x + 16, IMG_SIZE * y + 24);
+	}
+	else if (c == 'E' && game->player.coins != game->map.coins)
+		render_sprite(&game->display, &game->img_exit_0, x, y);
+	else if (c == 'E' && game->player.coins == game->map.coins)
+		render_sprite(&game->display, &game->img_exit_1, x, y);
 }
 
-void	render_map(t_data *game, t_map *map)
+void	render_map(t_game *game, t_map *map)
 {
 	int	i;
 	int	j;
@@ -60,4 +70,5 @@ void	render_map(t_data *game, t_map *map)
 		}
 		j++;
 	}
+	render_to_window(game, &game->display, 0, 0);
 }

@@ -26,22 +26,24 @@ unsigned int	get_pixel(t_img *sprite, int x, int y)
 
 /*don't copy the pixel if the colour is black ("transparent" bg)
 or blue (funny xpm conversion issue)*/
-void	put_pixel_to_base(t_img *base, int x, int y, int colour)
+void	put_pixel_to_base(t_img *base, int x, int y, unsigned int colour)
 {
 	char	*pos;
 
-	if (colour == (int)0xFF000000 || colour == (int)0x0000A4FF)
+	if (colour == (unsigned int)0xFF000000
+		|| colour == (unsigned int)0x0000A4FF)
 		return ;
 	if (y >= 0 && x >= 0 && y < base->y && x < base->x)
 	{
 		pos = base->addr + (y * base->line_size + x * (base->bpp / 8));
-		*(unsigned int *)pos = colour;
+		if (*(unsigned int *)pos != colour)
+			*(unsigned int *)pos = colour;
 	}
 }
 
 /*copy pixels from the player sprite to the base floor sprite
-the parameters x and y refer to the x/y offset from pos 0,0 of the base*/
-void	put_sprite_to_base(t_img *base, t_img *sprite, int x, int y)
+the parameters x and y refer to the x/y offset from pos 0,0 of the display*/
+void	render_sprite(t_img *base, t_img *sprite, int x, int y)
 {
 	unsigned int	current_pixel;
 	int				i;
@@ -54,7 +56,29 @@ void	put_sprite_to_base(t_img *base, t_img *sprite, int x, int y)
 		while (i < sprite->x)
 		{
 			current_pixel = get_pixel(sprite, i, j);
-			put_pixel_to_base(base, i + x, j + y, current_pixel);
+			put_pixel_to_base(base, i + (x * IMG_SIZE),
+				j + (y * IMG_SIZE), current_pixel);
+			i++;
+		}
+		j++;
+	}
+}
+
+void	render_offset(t_game *game, t_img *sprite, int x, int y)
+{
+	unsigned int	current_pixel;
+	int				i;
+	int				j;
+
+	j = 0;
+	while (j < sprite->y)
+	{
+		i = 0;
+		while (i < sprite->x)
+		{
+			current_pixel = get_pixel(sprite, i, j);
+			put_pixel_to_base(&game->display, i + x,
+				j + y, current_pixel);
 			i++;
 		}
 		j++;

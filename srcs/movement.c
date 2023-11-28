@@ -22,70 +22,74 @@ int	is_accessible(t_map *map, int x, int y)
 	return (0);
 }
 
-void	update_map(t_data *game, char **grid, t_player prev, t_player new)
+void	update_move_count(t_game *game)
 {
-	if (grid[new.y][new.x] == 'C')
-		game->current.coins++;
-	game->current.movements++;
-	if (grid[new.y][new.x] == 'E')
+	game->player.movements++;
+	ft_printf("Movements: %i\n", game->player.movements);
+}
+
+void	update_map(t_game *game, char **grid, t_pos prev, t_pos *new)
+{
+	if (grid[new->y][new->x] == 'C')
+		game->player.coins++;
+	if (grid[new->y][new->x] == 'E')
 	{
-		if (game->current.coins == game->map.coins)
-			end("Game cleared!\n", game, 0);
+		if (game->player.coins == game->map.coins)
+		{
+			update_move_count(game);
+			print_victory(game);
+		}
 		else
 		{
-			print_msg("You still have coins to collect!\n", 2);
-			game->player.x = prev.x;
-			game->player.y = prev.y;
+			print_extra_msg(game);
+			set_pos(new, prev.x, prev.y);
 			return ;
 		}
 	}
 	grid[prev.y][prev.x] = '0';
-	grid[new.y][new.x] = 'P';
-	check_sprite(game, grid[prev.y][prev.x], prev.x, prev.y);
-	check_sprite(game, grid[new.y][new.x], new.x, new.y);
-	ft_printf("Movements: %i\n", game->current.movements);
+	grid[new->y][new->x] = 'P';
+	update_move_count(game);
+	render_map(game, &game->map);
 }
 
-void	player_movement(t_data *game, t_map *map, t_player current, int dir)
+void	player_movement(t_game *game, t_map *map, t_pos *current, int dir)
 {
-	if (dir == up && is_accessible(map, current.x, current.y - 1))
+	if (dir == up && is_accessible(map, current->x, current->y - 1))
 	{
-		game->player.y -= 1;
-		update_map(game, map->grid, current, game->player);
+		current->y -= 1;
+		update_map(game, map->grid, game->player.prev, current);
 	}
-	else if (dir == down && is_accessible(map, current.x, current.y + 1))
+	else if (dir == down && is_accessible(map, current->x, current->y + 1))
 	{
-		game->player.y += 1;
-		update_map(game, map->grid, current, game->player);
+		current->y += 1;
+		update_map(game, map->grid, game->player.prev, current);
 	}
-	else if (dir == left && is_accessible(map, current.x - 1, current.y))
+	else if (dir == left && is_accessible(map, current->x - 1, current->y))
 	{
 		game->player.direction = left;
-		game->player.x -= 1;
-		update_map(game, map->grid, current, game->player);
+		current->x -= 1;
+		update_map(game, map->grid, game->player.prev, current);
 	}
-	else if (dir == right && is_accessible(map, current.x + 1, current.y))
+	else if (dir == right && is_accessible(map, current->x + 1, current->y))
 	{
 		game->player.direction = right;
-		game->player.x += 1;
-		update_map(game, map->grid, current, game->player);
+		current->x += 1;
+		update_map(game, map->grid, game->player.prev, current);
 	}
 }
 
-int	check_keypress(int keysym, t_data *game)
+int	key_handler(int keysym, t_game *game)
 {
-	t_player	current;
-
-	current.x = game->player.x;
-	current.y = game->player.y;
+	set_pos(&game->player.prev, game->player.current.x,
+		game->player.current.y);
 	if (keysym == W_KEY || keysym == UP_KEY)
-		player_movement(game, &game->map, current, up);
+		player_movement(game, &game->map, &game->player.current, up);
 	else if (keysym == S_KEY || keysym == DOWN_KEY)
-		player_movement(game, &game->map, current, down);
+		player_movement(game, &game->map, &game->player.current, down);
 	else if (keysym == A_KEY || keysym == LEFT_KEY)
-		player_movement(game, &game->map, current, left);
+		player_movement(game, &game->map, &game->player.current, left);
 	else if (keysym == D_KEY || keysym == RIGHT_KEY)
-		player_movement(game, &game->map, current, right);
+		player_movement(game, &game->map, &game->player.current, right);
 	else if (keysym == ESC)
 		end("Quitting game.\n", game, 0);
 	return (0);

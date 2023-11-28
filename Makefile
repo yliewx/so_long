@@ -26,9 +26,16 @@ else
 endif
 
 # so_long targets
-TARGET = init_game.c init_map.c verify_map.c render_sprites.c sprite_utils.c \
-	movement.c exit_utils.c
+TARGET = init_game.c init_map.c verify_map.c \
+	init_sprites.c render_sprites.c render_wall.c sprite_utils.c \
+	movement.c exit_utils.c message.c
 SRCS = $(addprefix srcs/, $(TARGET))
+BONUS_TARGET = init_game_bonus.c init_map_bonus.c verify_map_bonus.c \
+	init_sprites_bonus.c render_sprites_bonus.c \
+	render_wall_bonus.c sprite_utils_bonus.c \
+	movement_bonus.c animation_bonus.c enemy_bonus.c exit_utils_bonus.c \
+	message_bonus.c
+BONUS_SRCS = $(addprefix srcs_bonus/, $(BONUS_TARGET))
 
 # colours
 GREEN = \033[0;32m
@@ -40,12 +47,17 @@ END = \033[0m
 # RULES
 # all = create library from sub-make
 
-all: $(MLX_LIB) $(LIBFT) $(NAME)
+all: $(MLX_LIB) $(LIBFT) mandatory
 
-$(NAME): $(SRCS) $(MLX_LIB) $(LIBFT)
+mandatory: $(SRCS) $(MLX_LIB) $(LIBFT)
 	@echo "\n$(B_BROWN)[ COMPILING: $(NAME) ]$(END)"
 	@$(CC) $(CFLAGS) $(SRCS) -o $(NAME) $(LIB_FLAGS) $(MLX_FLAGS) $(MLX_INC)
 	@echo "$(B_GREEN)$(NAME) compiled.$(END)"
+
+bonus: $(BONUS_SRCS) $(MLX_LIB) $(LIBFT)
+	@echo "\n$(B_BROWN)[ COMPILING: $(NAME) bonus ]$(END)"
+	@$(CC) $(CFLAGS) $(BONUS_SRCS) -o $(NAME) $(LIB_FLAGS) $(MLX_FLAGS) $(MLX_INC)
+	@echo "$(B_GREEN)$(NAME) bonus compiled.$(END)"
 
 $(LIBFT):
 	@echo "\n$(B_BROWN)[ COMPILING: $(LIBFT) ]$(END)"
@@ -71,4 +83,4 @@ fclean: clean
 re: fclean all
 
 # declare phony
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean mandatory re

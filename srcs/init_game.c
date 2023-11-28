@@ -12,22 +12,22 @@
 
 #include "../includes/so_long.h"
 
-void	init_variables(t_data *game)
+void	init_variables(t_game *game)
 {
 	game->map.rows = 0;
 	game->map.columns = 0;
 	game->map.start = 0;
 	game->map.coins = 0;
 	game->map.exit = 0;
+	game->map.exit_found = false;
 	game->map.valid_path = false;
 	game->map.grid = NULL;
 	game->player.direction = left;
-	game->current.coins = 0;
-	game->current.movements = 0;
-	game->current.exit_found = false;
+	game->player.coins = 0;
+	game->player.movements = 0;
 }
 
-void	init_window(t_data *game)
+void	init_window(t_game *game)
 {
 	int	window_x;
 	int	window_y;
@@ -39,40 +39,27 @@ void	init_window(t_data *game)
 		end("Map size is too large.\n", game, 1);
 	game->win_ptr = mlx_new_window(game->mlx_ptr,
 			window_x, window_y, "so_long");
-}
-
-void	init_sprites(t_data *game)
-{
-	new_sprite(game, &game->img_wall, WALL_XPM);
-	new_sprite(game, &game->img_floor, FLOOR_XPM);
-	new_sprite(game, &game->img_exit, EXIT_XPM);
-	new_sprite(game, &game->base_player_L, FLOOR_XPM);
-	new_sprite(game, &game->base_player_R, FLOOR_XPM);
-	new_sprite(game, &game->img_player_L, PLAYER_IDLE_L_XPM);
-	new_sprite(game, &game->img_player_R, PLAYER_IDLE_R_XPM);
-	put_sprite_to_base(&game->base_player_L, &game->img_player_L, 0, 0);
-	put_sprite_to_base(&game->base_player_R, &game->img_player_R, 0, 0);
-	new_sprite(game, &game->base_coin, FLOOR_XPM);
-	new_sprite(game, &game->img_coin, COIN_XPM);
-	put_sprite_to_base(&game->base_coin, &game->img_coin, 16, 24);
+	game->display.ptr = mlx_new_image(game->mlx_ptr, window_x, window_y);
+	game->display.x = window_x;
+	game->display.y = window_y;
+	get_sprite_info(&game->display);
 }
 
 //move "game.map.valid_path = 1" to the relevant function later
 void	init_game(char **argv)
 {
-	t_data	game;
+	t_game	game;
 
 	init_variables(&game);
 	open_map(&game, argv[1]);
-	set_map_params(&game.map, game.map.full_line);
+	set_map_params(&game.map);
 	check_valid_map(&game, &game.map, game.map.full_line);
-	game.map.valid_path = 1;
 	game.mlx_ptr = mlx_init();
 	init_sprites(&game);
 	init_window(&game);
 	render_map(&game, &game.map);
-	mlx_key_hook(game.win_ptr, check_keypress, &game);
-	mlx_hook(game.win_ptr, 17, 0, close_game, &game);
+	mlx_key_hook(game.win_ptr, key_handler, &game);
+	mlx_hook(game.win_ptr, ON_DESTROY, 0, x_close_window, &game);
 	mlx_loop(game.mlx_ptr);
 }
 
