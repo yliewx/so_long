@@ -124,11 +124,11 @@ typedef struct s_img
 {
 	void	*ptr;
 	void	*addr;
-	int	x;
-	int	y;
-	int	bpp;
-	int	line_size;
-	int	endian;
+	int		x;
+	int		y;
+	int		bpp;
+	int		line_size;
+	int		endian;
 }	t_img;
 
 typedef struct s_pos
@@ -141,9 +141,9 @@ typedef struct s_data
 {
 	t_pos	current;
 	t_pos	prev;
-	int	coins;
-	int	movements;
-	int	direction;
+	int		coins;
+	int		movements;
+	int		direction;
 	bool	idle;
 }	t_data;
 
@@ -151,13 +151,13 @@ typedef struct s_map
 {
 	char	**grid;
 	char	*full_line;
-	int	fd;
-	int	rows;
-	int	columns;
-	int	start;
-	int	coins;
-	int	enemies;
-	int	exit;
+	int		fd;
+	int		rows;
+	int		columns;
+	int		start;
+	int		coins;
+	int		enemies;
+	int		exit;
 	bool	exit_found;
 	bool	valid_path;
 }	t_map;
@@ -192,22 +192,22 @@ typedef struct s_frames
 
 typedef struct s_game
 {
-	void	*mlx_ptr;
-	void	*win_ptr;
-	t_map	map;
-	t_data	player;
-	t_data	enemy;
-	t_wall	wall;
+	void		*mlx_ptr;
+	void		*win_ptr;
+	t_map		map;
+	t_data		player;
+	t_data		enemy;
+	t_wall		wall;
 	t_frames	l;
 	t_frames	r;
 	t_frames	en;
-	t_img	display;
-	t_img	img_floor;
-	t_img	img_coin;
-	t_img	img_exit_0;
-	t_img	img_exit_1;
-	int	screen_x;
-	int	screen_y;
+	t_img		display;
+	t_img		img_floor;
+	t_img		img_coin;
+	t_img		img_exit_0;
+	t_img		img_exit_1;
+	int			screen_x;
+	int			screen_y;
 }	t_game;
 
 /*init_game.c*/
@@ -244,13 +244,13 @@ void	check_components(t_game *game, t_map *map);
 void	check_valid_path(t_game *game, char ***grid, int x, int y);
 
 /*movement.c*/
-int	key_handler(int keysym, t_game *game);
+int		key_handler(int keysym, t_game *game);
 void	update_move_count(t_game *game);
 
 /*animation_bonus.c*/
-int	update_handler(t_game *game);
+int		update_handler(t_game *game);
 void	player_action(t_game *game);
-int	player_idle(t_game *game, t_pos current);
+int		player_idle(t_game *game, t_pos current);
 void	player_walk(t_game *game, t_pos prev, t_pos new);
 
 /*message_bonus.c*/
@@ -262,7 +262,7 @@ void	print_extra_msg(t_game *game);
 /*exit_utils.c*/
 void	end(char *message, t_game *game, int exit_code);
 void	free_map_grid(t_map map, char ***grid);
-int	x_close_window(t_game *game);
+int		x_close_window(t_game *game);
 
 /*enemy_bonus.c*/
 void	check_enemy(t_game *game, t_data *enemy, char **grid, int *dir);

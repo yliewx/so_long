@@ -102,11 +102,11 @@ typedef struct s_img
 {
 	void	*ptr;
 	void	*addr;
-	int	x;
-	int	y;
-	int	bpp;
-	int	line_size;
-	int	endian;
+	int		x;
+	int		y;
+	int		bpp;
+	int		line_size;
+	int		endian;
 }	t_img;
 
 typedef struct s_pos
@@ -119,21 +119,21 @@ typedef struct s_data
 {
 	t_pos	current;
 	t_pos	prev;
-	int	coins;
-	int	movements;
-	int	direction;
+	int		coins;
+	int		movements;
+	int		direction;
 }	t_data;
 
 typedef struct s_map
 {
 	char	**grid;
 	char	*full_line;
-	int	fd;
-	int	rows;
-	int	columns;
-	int	start;
-	int	coins;
-	int	exit;
+	int		fd;
+	int		rows;
+	int		columns;
+	int		start;
+	int		coins;
+	int		exit;
 	bool	exit_found;
 	bool	valid_path;
 }	t_map;
@@ -166,8 +166,8 @@ typedef struct s_game
 	t_img	img_coin;
 	t_img	img_exit_0;
 	t_img	img_exit_1;
-	int	screen_x;
-	int	screen_y;
+	int		screen_x;
+	int		screen_y;
 }	t_game;
 
 /*init_game.c*/
@@ -200,7 +200,7 @@ void	put_sprite_to_base(t_img *base, t_img *sprite, int x, int y);
 void	init_sprites(t_game *game);
 
 /*movement.c*/
-int	key_handler(int keysym, t_game *data);
+int		key_handler(int keysym, t_game *data);
 
 /*verify_map.c*/
 void	check_rectangle(t_game *game, t_map *map);
@@ -217,6 +217,6 @@ void	print_extra_msg(t_game *game);
 /*exit_utils.c*/
 void	end(char *message, t_game *game, int exit_code);
 void	free_map_grid(t_map map, char ***grid);
-int	x_close_window(t_game *game);
+int		x_close_window(t_game *game);
 
 #endif
